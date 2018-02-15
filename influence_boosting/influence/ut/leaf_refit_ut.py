@@ -2,14 +2,13 @@ from copy import deepcopy
 from logging import getLogger
 from os import mkdir
 from os.path import isdir
-
 import numpy as np
 from catboost import CatBoostClassifier
 
-from influence_boosting.influence_boosting.influence.leaf_refit import CBOneStepLeafRefitEnsemble
-from influence_boosting.influence_boosting.loss import BinaryCrossEntropyLoss
-from influence_boosting.scripts.script_utils.train import export_catboost_to_json
-from influence_boosting.data.adult import read_train_documents_and_one_hot_targets
+from ...influence.leaf_refit import CBOneStepLeafRefitEnsemble
+from ...loss import BinaryCrossEntropyLoss
+from ...util import export_catboost_to_json, read_json_params
+from data.adult import read_train_documents_and_one_hot_targets
 
 logger = getLogger('__main__')
 
@@ -24,31 +23,26 @@ def _test_all_points_retraining(method):
     train_dir = base_dir + 'ut_tmp/'
     if not isdir(train_dir):
         mkdir(train_dir)
-    cbc = CatBoostClassifier(iterations=100, learning_rate=0.2, loss_function='Logloss',
-                             train_dir=train_dir,
-                             leaf_estimation_iterations=1, leaf_estimation_method=method, random_seed=10,
-                             task_type='GPU',
-                             logging_level='Silent')
-    cbc.set_params(boosting_type='Plain')
+    cbc_params = read_json_params(base_dir + 'catboost_params.json')
+    cbc_params['leaf_estimation_method'] = method
+    cbc_params['random_seed'] = 10
+    cbc = CatBoostClassifier(**cbc_params)
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
     export_catboost_to_json(train_dir + 'model.bin', train_dir + 'model.json')
     full_model = CBOneStepLeafRefitEnsemble(train_dir + 'model.json', train_documents, train_targets,
-                                            learning_rate=0.2, loss_function=BinaryCrossEntropyLoss(),
+                                            learning_rate=cbc_params['learning_rate'],
+                                            loss_function=BinaryCrossEntropyLoss(),
                                             leaf_method=method,
                                             update_set='AllPoints')
 
     retrained_model_our = deepcopy(full_model)
     count = 0
     for remove_idx in np.random.randint(len(train_documents), size=20):
-        cbc = CatBoostClassifier(iterations=100, learning_rate=0.2, loss_function='Logloss',
-                                 train_dir=train_dir,
-                                 leaf_estimation_iterations=1, leaf_estimation_method=method, random_seed=10,
-                                 task_type='GPU',
-                                 logging_level='Silent')
-        cbc.set_params(boosting_type='Plain')
-        weights = [1] * len(train_documents)
-        weights[remove_idx] = 0
+        print remove_idx
+        cbc = CatBoostClassifier(**cbc_params)
+        weights = np.ones_like(train_targets, dtype=np.float64)
+        weights[remove_idx] = 1e-20
         cbc.fit(train_documents, train_targets, sample_weight=weights)
         cbc.save_model(train_dir + 'model_tmp.bin', format='cbm')
         export_catboost_to_json(train_dir + 'model_tmp.bin', train_dir + 'model_tmp.json')
@@ -56,7 +50,8 @@ def _test_all_points_retraining(method):
         train_documents_wo_removed = np.delete(train_documents, remove_idx, axis=0)
         train_targets_wo_removed = np.delete(train_targets, remove_idx, axis=0)
         retrained_model_true = CBOneStepLeafRefitEnsemble(train_dir + 'model_tmp.json', train_documents_wo_removed,
-                                                          train_targets_wo_removed, learning_rate=0.2,
+                                                          train_targets_wo_removed,
+                                                          learning_rate=cbc_params['learning_rate'],
                                                           loss_function=BinaryCrossEntropyLoss(),
                                                           leaf_method=method,
                                                           update_set='AllPoints')
@@ -83,12 +78,10 @@ def _test_prediction_consistency(method):
     train_dir = base_dir + 'ut_tmp/'
     if not isdir(train_dir):
         mkdir(train_dir)
-    cbc = CatBoostClassifier(iterations=1, learning_rate=0.2, loss_function='Logloss',
-                             train_dir=train_dir,
-                             leaf_estimation_iterations=1, leaf_estimation_method=method, random_seed=10,
-                             task_type='GPU',
-                             logging_level='Silent')
-    cbc.set_params(boosting_type='Plain')
+    cbc_params = read_json_params(base_dir + 'catboost_params.json')
+    cbc_params['leaf_estimation_method'] = method
+    cbc_params['random_seed'] = 10
+    cbc = CatBoostClassifier(**cbc_params)
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
     export_catboost_to_json(train_dir + 'model.bin', train_dir + 'model.json')

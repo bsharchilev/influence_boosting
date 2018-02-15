@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 from abc import ABCMeta, abstractmethod
 
-from influence_boosting.influence_boosting.util import expand_shapes_to_array
+from .util import expand_shapes_to_array
 
 
 def _array_expanding_wrapper(treat_input_as_row=True):

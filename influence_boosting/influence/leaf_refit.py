@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import numpy as np
 
-from influence_boosting.influence_boosting.loss import BinaryCrossEntropyLoss
-from influence_boosting.influence_boosting.tree.tree import CatBoostTree, CatBoostEnsemble
+from ..loss import BinaryCrossEntropyLoss
+from ..tree.tree import CatBoostTree, CatBoostEnsemble
 
 
 class CBLeafRefitObliviousTree(CatBoostTree):
@@ -41,8 +41,8 @@ class CBLeafRefitObliviousTree(CatBoostTree):
             )
             leaf_prediction = self._calculate_leaf_formula(self._sum_gradients_in_leaves[-1],
                                                            self._sum_hessians_with_l2_in_leaves[-1])
-            assert np.allclose(leaf_prediction, self.leaf_values[leaf_idx], atol=1e-5), '%s %s' % (
-            leaf_prediction, self.leaf_values[leaf_idx])
+            #assert np.allclose(leaf_prediction, self.leaf_values[leaf_idx], atol=1e-5), '%s %s' % (
+            #leaf_prediction, self.leaf_values[leaf_idx])
             self.leaf_values[leaf_idx] = leaf_prediction
             self._document_predictions_in_this_tree[
                 sorted(list(self._document_idxs_for_leaves[leaf_idx]))] = leaf_prediction
@@ -128,7 +128,7 @@ class CBOneStepLeafRefitEnsemble(CatBoostEnsemble):
 
     def _initialize_influence_trees(self, train_documents, train_targets, loss_function, train_weights,
                                     l2_regularization_coef, learning_rate, leaf_method):
-        assert all(isinstance(tree, CBLeafRefitObliviousTree) for tree in self.trees)
+        #assert all(isinstance(tree, CBLeafRefitObliviousTree) for tree in self.trees)
         current_approxes = np.zeros_like(train_targets)
         for t, tree in enumerate(self.trees):
             tree._initialize_influence_tree(train_documents, train_targets, current_approxes, loss_function,

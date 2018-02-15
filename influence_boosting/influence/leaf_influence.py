@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import numpy as np
 
-from influence_boosting.influence_boosting.loss import BinaryCrossEntropyLoss
-from influence_boosting.influence_boosting.tree.tree import CatBoostTree, CatBoostEnsemble
+from ..loss import BinaryCrossEntropyLoss
+from ..tree.tree import CatBoostTree, CatBoostEnsemble
 
 
 class CBLeafInfluenceObliviousTree(CatBoostTree):

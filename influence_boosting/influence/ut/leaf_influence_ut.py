@@ -7,10 +7,10 @@ import numpy as np
 import tensorflow as tf
 from catboost import CatBoostClassifier
 
-from influence_boosting.influence_boosting.influence.leaf_influence import CBLeafInfluenceEnsemble
-from influence_boosting.influence_boosting.loss import BinaryCrossEntropyLoss
-from influence_boosting.scripts.script_utils.train import export_catboost_to_json
-from influence_boosting.data.adult import read_train_documents_and_one_hot_targets
+from ..leaf_influence import CBLeafInfluenceEnsemble
+from ...loss import BinaryCrossEntropyLoss
+from ...util import export_catboost_to_json, read_json_params
+from data.adult import read_train_documents_and_one_hot_targets
 
 tf.logging.set_verbosity(logging.ERROR)
 logger = logging.getLogger('__main__')
@@ -101,8 +101,8 @@ def _test_influence_vs_tf_derivative(leaf_method):
     train_documents, train_targets = read_train_documents_and_one_hot_targets(
         base_dir + 'train_data_catboost_format.tsv'
     )
-    train_documents = train_documents[:1000]
-    train_targets = train_targets[:1000]
+    train_documents = train_documents[:100]
+    train_targets = train_targets[:100]
 
     train_targets = np.argmax(train_targets, axis=1)
 
@@ -114,18 +114,20 @@ def _test_influence_vs_tf_derivative(leaf_method):
     train_dir = base_dir + 'ut_tmp/'
     if not isdir(train_dir):
         mkdir(train_dir)
-    cbc = CatBoostClassifier(iterations=10, learning_rate=0.2, loss_function='Logloss', depth=4,
-                             train_dir=train_dir,
-                             leaf_estimation_iterations=1, leaf_estimation_method=leaf_method,
-                             task_type='GPU',
-                             logging_level='Silent')
+    cbc_params = read_json_params(base_dir + 'catboost_params.json')
+    cbc_params['iterations'] = 2
+    cbc_params['leaf_estimation_method'] = leaf_method
+    cbc_params['random_seed'] = 10
+    cbc = CatBoostClassifier(**cbc_params)
     cbc.set_params(boosting_type='Plain')
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
     export_catboost_to_json(train_dir + 'model.bin', train_dir + 'model.json')
-    full_model = CBLeafInfluenceEnsemble(train_dir + 'model.json', train_documents, train_targets, leaf_method=leaf_method,
-                                            learning_rate=0.2, loss_function=BinaryCrossEntropyLoss(),
-                                            update_set='AllPoints')
+    full_model = CBLeafInfluenceEnsemble(train_dir + 'model.json', train_documents, train_targets,
+                                         leaf_method=leaf_method,
+                                         learning_rate=cbc_params['learning_rate'],
+                                         loss_function=BinaryCrossEntropyLoss(),
+                                         update_set='AllPoints')
     retrained_model_our = deepcopy(full_model)
     tf_checker = TFGBApplier(full_model, train_documents, train_targets, leaf_method)
     for remove_idx in np.random.randint(len(train_targets), size=30):
@@ -160,17 +162,17 @@ def _test_prediction_consistency(leaf_method):
     train_dir = base_dir + 'ut_tmp/'
     if not isdir(train_dir):
         mkdir(train_dir)
-    cbc = CatBoostClassifier(iterations=100, learning_rate=0.2, loss_function='Logloss',
-                             train_dir=train_dir,
-                             leaf_estimation_iterations=1, leaf_estimation_method=leaf_method, random_seed=10,
-                             task_type='GPU',
-                             logging_level='Silent')
+    cbc_params = read_json_params(base_dir + 'catboost_params.json')
+    cbc_params['leaf_estimation_method'] = leaf_method
+    cbc_params['random_seed'] = 10
+    cbc = CatBoostClassifier(**cbc_params)
     cbc.set_params(boosting_type='Plain')
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
     export_catboost_to_json(train_dir + 'model.bin', train_dir + 'model.json')
     full_model = CBLeafInfluenceEnsemble(train_dir + 'model.json', train_documents, train_targets,
-                                         learning_rate=0.2, loss_function=BinaryCrossEntropyLoss(),
+                                         learning_rate=cbc_params['learning_rate'],
+                                         loss_function=BinaryCrossEntropyLoss(),
                                          leaf_method=leaf_method,
                                          update_set='AllPoints')
     assert np.allclose(full_model(train_documents), cbc.predict(train_documents, prediction_type='RawFormulaVal'), rtol=0.001),\
