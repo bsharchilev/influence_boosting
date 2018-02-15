@@ -1,0 +1,10 @@
+{
+  "iterations": 100,
+  "learning_rate": 0.2,
+  "loss_function": "Logloss",
+  "leaf_estimation_iterations": 1,
+  "leaf_estimation_method": "Newton",
+  "task_type": "CPU",
+  "boosting_type": "Plain",
+  "logging_level": "Silent"
+}
