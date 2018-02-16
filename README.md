@@ -38,3 +38,5 @@ This repository assumes that a program named ``export_catboost`` is available in
 
 # Example
 An example experiment showing the API and a use-case of Influence Functions can be found in the [``influence_for_error_fixing.ipynb``](https://github.com/bsharchilev/influence_boosting/blob/master/scripts/influence_for_error_fixing.ipynb) notebook.
+
+**_Note_**: in this notebook, CatBoost parameters are loaded from the [catboost_params.json](https://github.com/bsharchilev/influence_boosting/blob/master/data/adult/catboost_params.json) file. In particular, the ``task_type`` parameter is set to ``CPU`` by default. If you have a GPU with CUDA available on your machine and compiled CatBoost with GPU support, you can change this parameter to ``GPU`` in order to train CatBoost faster on GPU. The majority of the experiments in the paper were conducted using the ``GPU`` mode.
