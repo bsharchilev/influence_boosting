@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from influence_boosting.influence_boosting.loss import CrossEntropyLoss, BinaryCrossEntropyLoss
+from ..loss import CrossEntropyLoss, BinaryCrossEntropyLoss
 
 
 def _test_loss(sample_shape_fn):
