@@ -8,6 +8,6 @@ pip install numpy==1.14.0 scipy==0.19.1 pandas==0.20.3 scikit-learn==0.19.0 matp
 python -m ipykernel install --user --name influence_boosting
 
 # Make tqdm display correctly in notebook
-conda install ipywidgets==7.0.0 -y
+conda install -c conda-forge ipywidgets -y
 jupyter nbextension install --py --sys-prefix widgetsnbextension
 jupyter nbextension enable widgetsnbextension --py --sys-prefix
