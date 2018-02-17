@@ -1,12 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
-data/adult/experiment_results
 data/adult/ut_tmp
-MNIST_data
 .idea
 *.pyc
-/data/amazon/learn_error.tsv
-/data/amazon/meta.tsv
-/data/amazon/time_left.tsv
-/data/amazon/catboost_training.json
-/data/amazon/learn/
-/data/yahoo/Webscope_C14.tgz
