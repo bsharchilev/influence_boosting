@@ -89,9 +89,11 @@ def _test_prediction_consistency(method):
                                             learning_rate=0.2, loss_function=BinaryCrossEntropyLoss(),
                                             leaf_method=method,
                                             update_set='AllPoints')
-    assert np.allclose(full_model(train_documents), cbc.predict(train_documents, prediction_type='RawFormulaVal')),\
+    assert np.allclose(full_model(train_documents), cbc.predict(train_documents, prediction_type='RawFormulaVal'),
+                       atol=1e-5),\
                        (full_model(train_documents), cbc.predict(train_documents, prediction_type='RawFormulaVal'))
-    assert np.allclose(full_model(test_documents), cbc.predict(test_documents, prediction_type='RawFormulaVal'))
+    assert np.allclose(full_model(test_documents), cbc.predict(test_documents, prediction_type='RawFormulaVal'),
+                       atol=1e-5)
 
 
 def test_all_points_retraining_gradient():
