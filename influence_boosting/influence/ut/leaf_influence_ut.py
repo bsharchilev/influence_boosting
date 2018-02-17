@@ -118,6 +118,7 @@ def _test_influence_vs_tf_derivative(leaf_method):
     cbc_params['iterations'] = 2
     cbc_params['leaf_estimation_method'] = leaf_method
     cbc_params['random_seed'] = 10
+    cbc_params['train_dir'] = train_dir
     cbc = CatBoostClassifier(**cbc_params)
     cbc.set_params(boosting_type='Plain')
     cbc.fit(train_documents, train_targets)
@@ -165,6 +166,7 @@ def _test_prediction_consistency(leaf_method):
     cbc_params = read_json_params(base_dir + 'catboost_params.json')
     cbc_params['leaf_estimation_method'] = leaf_method
     cbc_params['random_seed'] = 10
+    cbc_params['train_dir'] = train_dir
     cbc = CatBoostClassifier(**cbc_params)
     cbc.set_params(boosting_type='Plain')
     cbc.fit(train_documents, train_targets)
