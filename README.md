@@ -36,6 +36,8 @@ This repository assumes that a program named ``export_catboost`` is available in
 - Copy it to ``export_catboost`` in the root repository directory.
 - Add the path to the root repository directory to the ``PATH`` environment variable.
 
+**_Note: since CatBoost's treatment of categorical features can be fairly complicated, ``export_catboost`` currently supports numerical features only._**
+
 # Example
 An example experiment showing the API and a use-case of Influence Functions can be found in the [``influence_for_error_fixing.ipynb``](https://github.com/bsharchilev/influence_boosting/blob/master/scripts/influence_for_error_fixing.ipynb) notebook.
 
