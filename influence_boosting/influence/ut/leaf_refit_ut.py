@@ -26,6 +26,7 @@ def _test_all_points_retraining(method):
     cbc_params = read_json_params(base_dir + 'catboost_params.json')
     cbc_params['leaf_estimation_method'] = method
     cbc_params['random_seed'] = 10
+    cbc_params['train_dir'] = train_dir
     cbc = CatBoostClassifier(**cbc_params)
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
@@ -81,6 +82,7 @@ def _test_prediction_consistency(method):
     cbc_params = read_json_params(base_dir + 'catboost_params.json')
     cbc_params['leaf_estimation_method'] = method
     cbc_params['random_seed'] = 10
+    cbc_params['train_dir'] = train_dir
     cbc = CatBoostClassifier(**cbc_params)
     cbc.fit(train_documents, train_targets)
     cbc.save_model(train_dir + 'model.bin', format='cbm')
