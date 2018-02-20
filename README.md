@@ -1,5 +1,5 @@
 # Finding Influential Training Samples for Gradient Boosted Decision Trees
-This repository implements the _LeafRefit_ and _LeafInfluence_ methods described in the paper _Finding Influential Training Samples for Gradient Boosted Decision Trees_.
+This repository implements the _LeafRefit_ and _LeafInfluence_ methods described in the paper [_Finding Influential Training Samples for Gradient Boosted Decision Trees_](https://128.84.21.199/abs/1802.06640).
 
 The paper deals with the problem of finding infuential training samples using the Infuence Functions framework from classical statistics recently revisited in the paper ["Understanding Black-box Predictions via Influence Functions"](https://arxiv.org/abs/1703.04730) ([code](https://github.com/kohpangwei/influence-release)). The classical approach, however, is only applicable to smooth parametric models. In our paper, we introduce _LeafRefit_ and _LeafInfuence_, methods for extending the Infuence Functions framework to non-parametric Gradient Boosted Decision Trees ensembles.
 
