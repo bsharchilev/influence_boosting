@@ -10,4 +10,4 @@ python -m ipykernel install --user --name influence_boosting
 # Make tqdm display correctly in notebook
 conda install -c conda-forge ipywidgets -y
 jupyter nbextension install --py --sys-prefix widgetsnbextension
-jupyter nbextension enable widgetsnbextension --py --sys-prefix
+jupyter nbextension enable widgetsnbextension --py --sys-prefix 
