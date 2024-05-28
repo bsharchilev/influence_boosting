@@ -4,7 +4,7 @@ This repository implements the _LeafRefit_ and _LeafInfluence_ methods described
 The paper deals with the problem of finding infuential training samples using the Infuence Functions framework from classical statistics recently revisited in the paper ["Understanding Black-box Predictions via Influence Functions"](https://arxiv.org/abs/1703.04730) ([code](https://github.com/kohpangwei/influence-release)). The classical approach, however, is only applicable to smooth parametric models. In our paper, we introduce _LeafRefit_ and _LeafInfuence_, methods for extending the Infuence Functions framework to non-parametric Gradient Boosted Decision Trees ensembles.
 
 # Requirements
-We recommend using the [Anaconda](https://www.anaconda.com/download/) Python distribution for easy installation.
+We recommend using the [Anaconda](https://www.anaconda.com/download/) Python distribution for easy installation. 
 ## Python packages
 The following Python 2.7 packages are required:
 
